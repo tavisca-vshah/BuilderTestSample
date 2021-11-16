@@ -1,4 +1,5 @@
-﻿using BuilderTestSample.Exceptions;
+﻿using Ardalis.GuardClauses;
+using BuilderTestSample.Exceptions;
 using BuilderTestSample.Model;
 
 namespace BuilderTestSample.Services
@@ -18,11 +19,10 @@ namespace BuilderTestSample.Services
         {
             // throw InvalidOrderException unless otherwise noted.
 
-            // TODO: order ID must be zero (it's a new order)
-            if (order.Id != 0) throw new InvalidOrderException("Order ID must be 0.");
-
-            // TODO: order amount must be greater than zero
-            // TODO: order must have a customer (customer is not null)
+            Guard.Against.Null(order, nameof(Order), "order must be not null.");
+            Guard.Against.AgainstExpression( (id) => id == 0, order.Id, "Order ID must be 0.");
+            Guard.Against.NegativeOrZero(order.TotalAmount, nameof(Order.TotalAmount), "order amount must be greater than zero");
+            Guard.Against.Null(order.Customer, nameof(Order.Customer), "order must have a customer (customer is not null)");
 
             ValidateCustomer(order.Customer);
         }
@@ -31,6 +31,8 @@ namespace BuilderTestSample.Services
         {
             // throw InvalidCustomerException unless otherwise noted
             // create a CustomerBuilder to implement the tests for these scenarios
+
+            Guard.Against.NegativeOrZero(customer.Id, nameof(Order.Customer), "customer must have an ID > 0");
 
             // TODO: customer must have an ID > 0
             // TODO: customer must have an address (it is not null)

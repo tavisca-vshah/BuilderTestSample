@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace BuilderTestSample.Model
 {
-    public class Customer
+    public class Customer: ICloneable
     {
         public Customer(int id)
         {
@@ -19,5 +20,11 @@ namespace BuilderTestSample.Model
         public decimal TotalPurchases { get; set; }
 
         public List<Order> OrderHistory { get; set; } = new List<Order>();
+
+        public object Clone()
+        {
+            var serialized = JsonConvert.SerializeObject(this);
+            return JsonConvert.DeserializeObject<Customer>(serialized);
+        }
     }
 }

@@ -9,24 +9,49 @@ namespace BuilderTestSample.Tests.TestBuilders
     {
         private Order _order = new ();
 
-        public OrderBuilder()
-        {
-            _order.TotalAmount = 100m;
-
-            // TODO: replace next lines with a CustomerBuilder you create
-            // _order.Customer = new Customer();
-            // _order.Customer.HomeAddress = new Address();
-        }
-
         public OrderBuilder WithId(int id)
         {
             _order.Id = id;
             return this;
         }
 
+        public OrderBuilder WithCustomer(Customer customer)
+        {
+            _order.Customer = customer != null ? (Customer)customer.Clone() : null;
+            return this;
+        }
+        public OrderBuilder WithTotalAmount(decimal totalAmount)
+        {
+            _order.TotalAmount = totalAmount;
+            return this;
+        }
+        public OrderBuilder WithEnabledExpediteture()
+        {
+            _order.IsExpedited = true;
+            return this;
+        }
+        public OrderBuilder WithDisabledExpediteture()
+        {
+            _order.IsExpedited = false;
+            return this;
+        }
+        public OrderBuilder WithTestValues()
+        {
+            _order = new OrderBuilder()
+                .WithId(111)
+                .WithTotalAmount(1000m)
+                .WithCustomer(new CustomerBuilder().WithTestValues())
+                .WithEnabledExpediteture();
+            return this;
+        }
+
+        public static implicit operator Order(OrderBuilder instance)
+        {
+            return instance.Build();
+        }
         public Order Build()
         {
-            return _order;
+            return (Order)_order.Clone();
         }
     }
 }
